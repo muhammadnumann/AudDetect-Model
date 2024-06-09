@@ -4,10 +4,14 @@ import os
 import numpy as np
 from librosa import load, feature
 from tensorflow.keras.models import load_model
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
-async def predict_deepfake(audio_file_path, model_path, max_length=500, threshold=0.5):
+async def predict_deepfake(audio_file_path, max_length=500, threshold=0.5):
 
+  model_path = os.getenv("MODEL_PATH")
   # Error handling
   if not os.path.exists(audio_file_path):
     raise FileNotFoundError(f"Audio file not found: {audio_file_path}")
@@ -56,7 +60,7 @@ async def upload_file(file: UploadFile = UploadFile(...)):
             shutil.copyfileobj(file.file, f)        
 
         audio_file = file.filename
-        prediction = await predict_deepfake(audio_file, 'model.keras')
+        prediction = await predict_deepfake(audio_file)
         print("Predicted label: ",prediction)
 
         try:
